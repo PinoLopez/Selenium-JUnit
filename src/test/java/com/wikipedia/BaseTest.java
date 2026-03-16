@@ -30,7 +30,7 @@ public abstract class BaseTest {
         new java.io.File("test-output/SparkReport").mkdirs();
 
         ExtentSparkReporter spark =
-                new ExtentSparkReporter("test-output/SparkReport/Index.html");
+                new ExtentSparkReporter("test-output/SparkReport/index.html");
         spark.config().setReportName("Selenium-JUnit Wikipedia Tests");
         spark.config().setDocumentTitle("Selenium Test Report");
         spark.config().setTheme(Theme.DARK);
