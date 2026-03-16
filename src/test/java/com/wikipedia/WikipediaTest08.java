@@ -1,72 +1,70 @@
 package com.wikipedia;
 
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import static org.junit.jupiter.api.Assertions.*;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+import static org.junit.jupiter.api.Assertions.*;
 
-public class WikipediaTest08 {
+public class WikipediaTest08 extends BaseTest {
+
+    @BeforeEach
+    public void setUp() {
+        driver.get("https://en.wikipedia.org/wiki/Granada");
+    }
 
     @Test
-    public void testHighlightElementsOnGranadaPage() {
-        // Configurar el driver de Selenium 
-        System.setProperty("webdriver.gecko.driver", "/home/agropecuario/geckodriver"); 
+    public void verifyPageTitle() {
+        WebElement h1 = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("firstHeading")));
+        assertTrue(h1.getText().contains("Granada"), "H1 should contain 'Granada'");
+        System.out.println("Page title verified: " + h1.getText());
+    }
 
-        // Inicializar el WebDriver (Firefox en este caso)
-        WebDriver driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
+    @Test
+    public void verifyPageStructure() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector(".mw-logo-wordmark")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("input[name='search']")));
+        System.out.println("Page structure verified correctly.");
+    }
 
-        try {
-            // Navegar a la página de Granada en Wikipedia
-            driver.get("https://en.wikipedia.org/wiki/Granada");
-
-            // Lista de elementos a buscar y sus colores de resaltado
-            List<String> elementos = Arrays.asList("Alhambra", "Andalusia");
-            List<String> colores = Arrays.asList("yellow", "cyan");
-            
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            
-            for (int i = 0; i < elementos.size(); i++) {
-                String elemento = elementos.get(i);
-                String color = colores.get(i);
-
-                // Buscar el elemento en la página
-                WebElement elementoEncontrado = driver.findElement(By.xpath("//a[contains(text(), '" + elemento + "')]"));
-                
-                // Hacer scroll hasta el elemento
-                js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", elementoEncontrado);
-                Thread.sleep(1000);
-                
-                // Resaltar el elemento con el color correspondiente
-                js.executeScript("arguments[0].style.backgroundColor = arguments[1]; arguments[0].style.border = '3px solid black';", elementoEncontrado, color);
-                
-                // Pequeña pausa para visualizar el cambio
-                Thread.sleep(2000);
-            }
-            
-            // Verificar que la página se ha cargado correctamente
-            String title = driver.getTitle();
-            assertTrue(title.contains("Granada"));
-            
-            // Pausa final para observar el resultado antes de cerrar
-            Thread.sleep(2000);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Cerrar el navegador
-            driver.quit();
+    @Test
+    public void verifyContentSections() {
+        List<String> sections = Arrays.asList("History", "Geography");
+        for (String section : sections) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//h2[contains(.,'" + section + "')]")));
+            System.out.println("Section verified: " + section);
         }
+        System.out.println("All content sections verified.");
+    }
+
+    @Test
+    public void verifyAlhambraLinkExists() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//a[contains(text(),'Alhambra')]")));
+        System.out.println("Alhambra link verified.");
+    }
+
+    @Test
+    public void verifyFooterLinks() {
+        ((JavascriptExecutor) driver).executeScript(
+                "window.scrollTo(0, document.body.scrollHeight)");
+        List<String> links = Arrays.asList(
+                "Privacy policy", "About Wikipedia", "Disclaimers");
+        for (String link : links) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[@id='footer']//a[contains(.,'" + link + "')]")));
+            System.out.println("Footer link verified: " + link);
+        }
+        System.out.println("Footer links verified.");
     }
 }

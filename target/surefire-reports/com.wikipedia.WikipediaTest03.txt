@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.wikipedia.WikipediaTest03
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 14.64 s -- in com.wikipedia.WikipediaTest03
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.68 s -- in com.wikipedia.WikipediaTest03

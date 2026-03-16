@@ -1,7 +1,12 @@
 com/wikipedia/WikipediaTest10.class
 com/wikipedia/WikipediaTest06.class
-com/wikipedia/WikipediaTest09.class
 com/wikipedia/WikipediaTest08.class
-com/wikipedia/WikipediaTest01.class
 com/wikipedia/WikipediaTest07.class
 com/wikipedia/WikipediaTest03.class
+com/wikipedia/WikipediaTest09.class
+com/wikipedia/WikipediaTest04.class
+com/wikipedia/WikipediaTest02.class
+com/wikipedia/BaseTest.class
+com/wikipedia/WikipediaTest05.class
+com/wikipedia/ExtentTestWatcher.class
+com/wikipedia/WikipediaTest01.class

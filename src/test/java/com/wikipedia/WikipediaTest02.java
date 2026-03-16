@@ -1,82 +1,74 @@
 package com.wikipedia;
 
-import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import static org.junit.jupiter.api.Assertions.*;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+import static org.junit.jupiter.api.Assertions.*;
 
-public class WikipediaTest02 
-{
+public class WikipediaTest02 extends BaseTest {
+
+    @BeforeEach
+    public void setUp() {
+        driver.get("https://en.wikipedia.org/wiki/Roland_Corporation");
+    }
 
     @Test
-    public void testSearchRolandCorporation() 
-    {
-        // Configurar el driver de Selenium 
-        System.setProperty("webdriver.gecko.driver", "/home/agropecuario/geckodriver"); 
+    public void verifyPageTitle() {
+        WebElement h1 = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("firstHeading")));
+        assertEquals("Roland Corporation", h1.getText(), "H1 title should match");
+        System.out.println("Page title verified: " + h1.getText());
+    }
 
-        // Inicializar el WebDriver 
-        WebDriver driver = new FirefoxDriver();
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    @Test
+    public void verifyPageStructure() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector(".mw-logo-wordmark")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("input[name='search']")));
+        System.out.println("Page structure verified correctly.");
+    }
 
-        try {
-            // Navegar a la página principal de Wikipedia
-            driver.get("https://es.wikipedia.org/wiki/Wikipedia:Portada");
-            driver.manage().window().maximize();
+   @Test
+public void verifyContentSections() {
+    List<String> sections = Arrays.asList("History", "Brands", "References");
+    for (String section : sections) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//h2[contains(.,'" + section + "')]")));
+        System.out.println("Section verified: " + section);
+    }
+    System.out.println("All content sections verified.");
+}
 
-            // Buscar "Roland Corporation"
-            WebElement searchInput = driver.findElement(By.name("search"));
-            searchInput.sendKeys("Roland Corporation");
-            searchInput.submit();
-            
-            // Esperar la carga de la página
-            Thread.sleep(3000);
-
-            // Lista de modelos a buscar y colores
-            List<String> modelos = Arrays.asList("TB-303", "TR-909");
-            List<String> colores = Arrays.asList("red", "blue");
-            
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            
-            for (int i = 0; i < modelos.size(); i++) {
-                String modelo = modelos.get(i);
-                String color = colores.get(i);
-
-                // Buscar el elemento del modelo
-                WebElement modeloElement = driver.findElement(By.xpath("//a[contains(text(), '" + modelo + "')]") );
-                
-                // Hacer scroll hasta el elemento
-                js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", modeloElement);
-                Thread.sleep(2000);
-                
-                // Resaltar el elemento en color correspondiente
-                js.executeScript("arguments[0].style.backgroundColor = arguments[1]; arguments[0].style.border = '3px solid black';", modeloElement, color);
-                
-                // Pequeña pausa para visualizar el cambio
-                Thread.sleep(2000);
-            }
-            
-            // Verificar que la página se ha cargado correctamente
-            String title = driver.getTitle();
-            assertTrue(title.contains("Roland Corporation"));
-            
-            // Pausa final para observar el resultado antes de cerrar
-            Thread.sleep(3000);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Cerrar el navegador
-            driver.quit();
+    @Test
+    public void verifyProductLinksExist() {
+        List<String> products = Arrays.asList("TB-303", "TR-909");
+        for (String product : products) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//a[contains(text(),'" + product + "')]")));
+            System.out.println("Product link verified: " + product);
         }
+        System.out.println("Product links verified.");
+    }
+
+    @Test
+    public void verifyFooterLinks() {
+        ((JavascriptExecutor) driver).executeScript(
+                "window.scrollTo(0, document.body.scrollHeight)");
+        List<String> links = Arrays.asList(
+                "Privacy policy", "About Wikipedia", "Disclaimers");
+        for (String link : links) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[@id='footer']//a[contains(.,'" + link + "')]")));
+            System.out.println("Footer link verified: " + link);
+        }
+        System.out.println("Footer links verified.");
     }
 }
